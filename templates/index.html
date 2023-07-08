@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    
+    <title>Sentiment Based Product Recommendation</title>
+  </head>
+
+  <body>
+
+<div class="container">
+ 
+ <div class="tabset">
+    <!-- Tab 1 -->
+    <input type="radio" name="tabset" id="tab1" aria-controls="sentiment_based_product_recommendation" checked>
+    <label for="tab1">Sentiment Based Product Recommendation</label>
+    <!-- Tab 2 -->
+    <input type="radio" name="tabset" id="tab2" aria-controls="predict_review_sentiments">
+    <label for="tab2">Predict Review Sentiments</label>
+   
+    
+  <div class="tab-panels">
+  <section id="sentiment_based_product_recommendation" class="tab-panel">
+  <div class="row">
+      <div class="col-lg-12 card-margin">
+          <div class="card search-form">
+              <div class="card-body p-0">
+                  <form id="search-form" action="/predict" method="post">
+                    
+                      <div class="row">
+                          <div class="col-12">
+                              <div class="row no-gutters">
+                                  <div class="col-lg-10 col-md-10 col-sm-12 p-0">
+                                      <input type="text" placeholder="Search...like 123charlie, 02dakota, 08dallas" class="form-control"  id="userName" name="userName">
+                                     
+                                  </div>
+                                  <div class="col-lg-1 col-md-1 col-sm-12 p-0">
+                                      <button type="submit" class="btn btn-base">
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                      </button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </form>
+              </div>
+            </div>
+      </div>
+  </div>
+  {% if message%}
+    <div class="row">
+       <div class="alert alert-danger" role="alert">{{message}}</div>
+     </div>
+  {% else %}  
+  {% if row_data %}
+    <div class="row row_data">
+        <div class="col-12">
+            <div class="card card-margin">
+                <div class="card-body">
+                    <div class="row search-body">
+                        <div class="col-lg-12">
+                            <div class="search-result">
+                                
+                                <div class="result-body">
+                                    <div class="table-responsive">
+                                     
+                                        <table class="table widget-26">
+                                            <thead>
+                                              <tr>
+                                                <td>Product</td>
+                                                <td>Brand</td>
+                                                <td>Manufacturer</td>
+                                                <td>Recommendation %</td>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {% for row in row_data %}
+                                              <tr>
+                                                {% for col, row_ in zip(column_names, row) %}
+                                                <td>{{row_}}</td>
+                                                {% endfor %}
+                                              </tr>
+                                              {% endfor %}
+                                            </tbody>
+                                        </table>
+                                       
+                                    </div>
+
+                                </div>
+                                <div class="result-header">
+                                  <div class="row">
+                                      <div class="col-lg-6">
+                                          <div class="records">Showing: <b>1-5</b> of <b>5</b> Top Recommended Products result</div>
+                                      </div>
+                                      
+                                  </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+  </section>
+<section id="predict_review_sentiments" class="tab-panel">
+    <div class="row">
+        <form class="review_form" method="post" action="">
+            <div class="row vstack gap-3">
+              <div class="row">
+                <textarea
+                  class="form-control reviewText"
+                  name="reviewText"
+                  rows="3"
+                  
+                  id="reviewText"
+                  placeholder="Enter your Review to predict sentments..."
+                ></textarea>
+                
+              </div>
+              <div class="row">
+                <div class="col align-self-end">
+                   <a id="fab_review_send" class="fab btn btn-primary float-end"
+                   value="Predict Sentiment">Predict Sentiment</a> 
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="alert" role="alert"></div>
+              </div>
+            </div>
+          </form>
+    </div>
+</section>
+</div>
+  </div>
+  
+  <script>
+
+// $('#tab1').click(function () {
+//        event.preventDefault();
+//        $(".alert").html("");
+//        $('#tab2').hide();
+//        $('#tab1').show();
+
+//  });
+
+//  $('#tab2').click(function () {
+//        event.preventDefault();
+
+//        $(".row_data").html("");
+//        $('#tab1').hide();
+//        $('#tab2').show();
+
+//  });
+
+  $('#fab_review_send').click(function () {
+       event.preventDefault();
+
+       const msgText = $('textarea#reviewText').val()
+
+      predictReviewSentiments(msgText);
+ });
+
+function predictReviewSentiments(rawText) {
+
+$.get("/predict_sentiment", { review_text: rawText}).done(function (data) {
+    
+            msgText = JSON.parse(data).split("\n");
+            console.log("msgText :", data);
+
+            if (msgText == 1){
+              response = "The Prediction for entered Review Text is Positive";
+              $('.alert').removeClass('alert-danger');
+
+              $('.alert').addClass('alert-success');
+
+            }else{
+              response = "The Prediction for entered Review Text is Negative";
+              $('.alert').removeClass('alert-success');
+              $('.alert').addClass('alert-danger');
+            }
+            $(".alert").html(response);
+            
+});
+
+}
+
+  </script>
+  </body>
+  </html>
