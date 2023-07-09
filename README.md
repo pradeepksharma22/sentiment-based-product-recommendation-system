@@ -1,4 +1,4 @@
-# sentiment-based-Product-Recommendation-System  - IIITB Assignment
+# CAPSTONE PROJECT : sentiment-based-Product-Recommendation-System  - IIITB Assignment
 
 
 ### Problem Statement
@@ -16,7 +16,7 @@ Data sourcing and sentiment analysis Building a recommendation system Improving 
 
 
 ## Acknowledgements
-- This project was based on product-based recommendations in MLP and is done as a part of Deep Learning module for the Executive PG Programme in Machine Learning & AI - IIIT,Bangalore.
+- This project was based on product-based recommendations using NLP and is done as a part of a capstone project for the Executive PG Programme in Machine Learning & AI - IIIT,Bangalore.
 
 
 ## Contributors
